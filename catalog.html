@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="kk">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            min-height: 100vh;
+            padding-top: 30px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .nav-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 100;
+        }
+
+        .home-btn {
+            margin-left: 30px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            background: linear-gradient(45deg, #ffdd00, #ffa500);
+            color: #1a1a1a;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(255, 221, 0, 0.3);
+        }
+
+        .home-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 221, 0, 0.5);
+            background: linear-gradient(45deg, #ffa500, #ffdd00);
+        }
+
+        .home-btn i {
+            font-size: 16px;
+        }
+
+        .header h1 {
+            color: #ffdd00;
+            font-size: 2.5em;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .catalog-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+
+        .product-card {
+            background: #2a2a2a;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            border: 2px solid transparent;
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(255, 221, 0, 0.2);
+            border-color: #ffdd00;
+        }
+
+        .product-image {
+            height: 250px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-tag {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: #ffdd00;
+            color: #1a1a1a;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .product-info {
+            padding: 20px;
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.95) 100%);
+            color: #ffdd00;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+
+        .product-name {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #ffdd00;
+        }
+
+        .product-description {
+            font-size: 0.9em;
+            opacity: 0.8;
+            color: #ffffff;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.95);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            position: relative;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 800px;
+            background: #2a2a2a;
+            border-radius: 15px;
+            overflow: hidden;
+            animation: slideIn 0.3s ease;
+            border: 2px solid #ffdd00;
+        }
+
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 25px;
+            color: #ffdd00;
+            font-size: 35px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 1001;
+            background: rgba(0, 0, 0, 0.7);
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            border: 2px solid #ffdd00;
+        }
+
+        .close:hover {
+            background: rgba(255, 221, 0, 0.2);
+            transform: scale(1.1);
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            height: 450px;
+            background: #1a1a1a;
+        }
+
+        .video-container video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .modal-info {
+            padding: 30px;
+            text-align: center;
+            background: #2a2a2a;
+        }
+
+        .modal-info h2 {
+            color: #ffdd00;
+            font-size: 2em;
+            margin-bottom: 15px;
+        }
+
+        .modal-info p {
+            color: #ffffff;
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -60%);
+            }
+
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .catalog-container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .modal-content {
+                width: 95%;
+                margin: 20px;
+            }
+
+            .video-container {
+                height: 250px;
+            }
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-rows: repeat(5, 1fr);
+            width: 90%;
+            margin: auto;
+            height: 320vh;
+            object-fit: cover;
+            gap: 30px;
+        }
+
+        img {
+            width: 100%;
+            height: 60vh;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 3px solid #ffdd00;
+            transition: all 0.3s ease;
+        }
+
+        img:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(255, 221, 0, 0.3);
+        }
+
+        .projects-section {
+            background: linear-gradient(135deg, #ffdd00 0%, #ffa600 100%);
+            padding: 50px 0;
+            margin-top: 80px;
+        }
+
+        .projects-section h1 {
+            margin: 50px auto 30px;
+            width: 100%;
+            text-align: center;
+            color: #1a1a1a;
+            font-size: 3em;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <div class="nav-container">
+            <a href="index.html" class="home-btn">
+                <i class="fas fa-home"></i> Home
+            </a>
+        </div>
+        <h1>Каталог товаров </h1>
+    </div>
+
+    <div class="catalog-container">
+        <!-- Product 1 -->
+        <div class="product-card" onclick="openModal('modal1')">
+            <div class="product-image"
+                style="background-image: url('https://scontent.cdninstagram.com/v/t51.75761-15/491679279_18461404351075418_152030440637622120_n.jpg?stp=dst-jpg_e15_tt6&_nc_cat=101&ig_cache_key=MzYxOTE0NjU3MzM1OTk5NTM4NQ%3D%3D.3-ccb1-7&ccb=1-7&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6InhwaWRzLjcyMHgxMjgwLnNkciJ9&_nc_ohc=sxyK1e1h1UAQ7kNvwFSfqJC&_nc_oc=AdkITq_KUgTWcRQexszEukB3sMlzRQrDRtiRRpoKNz_BTnRmtyyfpRdovh22zYDaZIu6VoStvV_M16ruwp5VdJ1M&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent.cdninstagram.com&_nc_gid=6k7lqJQgvvz-wpwUZGXcXQ&oh=00_AfJNO8KOhM9-hSIk77V0Ozwem_CR8EptnMn65GC5S0wRmw&oe=6838E600');">
+                <div class="product-info">
+                    <div class="product-name">Парк Мира и Согласия </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Product 2 -->
+        <div class="product-card" onclick="openModal('modal2')">
+            <div class="product-image" style="background-image: url('imagecata/second.jpg');">
+
+                <div class="product-info">
+                    <div class="product-name">Оливковое дерево</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Product 3 -->
+        <div class="product-card" onclick="openModal('modal3')">
+            <div class="product-image" style="background-image: url('imagecata/fourth.jpg');">
+
+                <div class="product-info">
+                    <div class="product-name">Мечеть Ая-София </div>
+
+                </div>
+            </div>
+        </div>
+        <!-- Product 1 -->
+        <div class="product-card" onclick="openModal('modal4')">
+            <div class="product-image" style="background-image: url('imagecata/fifth.jpg');">
+
+                <div class="product-info">
+                    <div class="product-name">Искусственная " Скала”</div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Product 2 -->
+        <div class="product-card" onclick="openModal('modal5')">
+            <div class="product-image" style="background-image: url('imagecata/ышчер.jpg');">
+
+                <div class="product-info">
+                    <div class="product-name">Рельефные розы с подсветкой</div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Product 3 -->
+        <div class="product-card" onclick="openModal('modal6')">
+            <div class="product-image" style="background-image: url('imagecata/seventh.jpg');">
+
+                <div class="product-info">
+                    <div class="product-name">Нейролиния</div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 1 -->
+    <div id="modal1" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('modal1')">&times;</span>
+            <div class="video-container">
+                <video controls autoplay muted>
+                    <source
+                        src="https://instagram.fala3-2.fna.fbcdn.net/o1/v/t2/f2/m86/AQP_KhoykaLlsRjiVr4L775Sa9KgnqyWksfEEx1IlI0CUMO1LPmlL-lH0pSM7rlP9pMkaCGIilJBnTbSEtxsWqDoEqf0eihYTfQ6yiE.mp4?_nc_cat=100&_nc_oc=Adl0WeNat1uGEutaKgRJU4k5p3BI80Z6T1AdALfUIYp23KVB3bUzCZxLSCuMgS--Ff0czXyFVW1vHGLsbqrkTtKo&_nc_sid=5e9851&_nc_ht=instagram.fala3-2.fna.fbcdn.net&_nc_ohc=sBLJELCiFSkQ7kNvwGVT2Ik&efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5JTlNUQUdSQU0uQ0xJUFMuQzMuNzIwLmRhc2hfYmFzZWxpbmVfMV92MSIsInhwdl9hc3NldF9pZCI6MTc3NjI3NjEyNjI1Mzk4MywidmlfdXNlY2FzZV9pZCI6MTAwOTksImR1cmF0aW9uX3MiOjMxLCJ1cmxnZW5fc291cmNlIjoid3d3In0%3D&ccb=17-1&vs=59829fd443dcfc83&_nc_vs=HBksFQIYUmlnX3hwdl9yZWVsc19wZXJtYW5lbnRfc3JfcHJvZC8zODRDRDY4Qzk1NDhGRjFEQUU4NzYyNzM1OTVBQzFBNF92aWRlb19kYXNoaW5pdC5tcDQVAALIARIAFQIYOnBhc3N0aHJvdWdoX2V2ZXJzdG9yZS9HSTBxU1IzZVB0d1ZQREVDQUhYdlJOdllrU0pzYnFfRUFBQUYVAgLIARIAKAAYABsCiAd1c2Vfb2lsATEScHJvZ3Jlc3NpdmVfcmVjaXBlATEVAAAmvo66uPDgpwYVAigCQzMsF0A_1T987ZFoGBJkYXNoX2Jhc2VsaW5lXzFfdjERAHX-B2XmnQEA&_nc_zt=28&oh=00_AfKsw1lTvtDksks5ABiXYoLd8G0gvOswwhYOzLZv3PRY7w&oe=6834E3C1"
+                        type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Modal 2 -->
+    <div id="modal2" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('modal2')">&times;</span>
+            <div class="video-container">
+                <video controls autoplay muted>
+                    <source
+                        src="https://instagram.fala3-2.fna.fbcdn.net/o1/v/t2/f2/m82/AQM14DT7CAzQcRZAxz_pjkAJJGGTmRoKlO7-jOZHzh3imjRiuEd2A-59ijvbYlLTMv8-S_ciE1MVl-IXIWTwV-g5YDVIBjsV5gdMSEc.mp4?_nc_cat=106&_nc_oc=Admc3H3n8VPak2D4t9iUn5--QUoHDlE5-U42dc87dhSvB_pPQTU5QOm2BbfEu34lov8T4mYP2lWBsfsCORusrOGB&_nc_sid=5e9851&_nc_ht=instagram.fala3-2.fna.fbcdn.net&_nc_ohc=GBL44gitCGsQ7kNvwE5t4di&efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5JTlNUQUdSQU0uQ0xJUFMuQzMuMzYwLmRhc2hfYmFzZWxpbmVfM192MSIsInhwdl9hc3NldF9pZCI6MTE2NTUyNDE4ODIyMzY5NiwiYXNzZXRfYWdlX2RheXMiOjM5MCwidmlfdXNlY2FzZV9pZCI6MTAwOTksImR1cmF0aW9uX3MiOjI3LCJ1cmxnZW5fc291cmNlIjoid3d3In0%3D&ccb=17-1&vs=104287f913c52aa8&_nc_vs=HBksFQIYT2lnX3hwdl9yZWVsc19wZXJtYW5lbnRfcHJvZC9FNTRBNTM0RkU3QTJBM0I4Mjg2NTk1MzQzRENBNDBBRF92aWRlb19kYXNoaW5pdC5tcDQVAALIARIAFQIYOnBhc3N0aHJvdWdoX2V2ZXJzdG9yZS9HRTNjOGh1MmJud0FGZjREQVBmekZRdXhKWGdrYnFfRUFBQUYVAgLIARIAKAAYABsCiAd1c2Vfb2lsATEScHJvZ3Jlc3NpdmVfcmVjaXBlATEVAAAmoOO687eCkgQVAigCQzMsF0A7gAAAAAAAGBJkYXNoX2Jhc2VsaW5lXzNfdjERAHX-B2XmnQEA&_nc_zt=28&oh=00_AfJ8DjvjyMoiANvKHSyDe2FkG12XTnStf1hGz-0llZy6og&oe=6834FD5F"
+                        type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Modal 3 -->
+    <div id="modal3" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('modal3')">&times;</span>
+            <div class="video-container">
+                <video controls autoplay muted>
+                    <source
+                        src="https://instagram.fala3-2.fna.fbcdn.net/o1/v/t2/f2/m86/AQOsuYa2UwpzxO_UNQ_cIxo219xju7oEwtWiFJqyGVbjqGZTpHs4PvZaXW_J3I5cc74Fe-5UN_RrTLrSyEiN91jP7Nzv6qs0DGlOs9g.mp4?_nc_cat=100&_nc_oc=Adk-LrJBbXVLpRBH9R1B3QnjHj0v9u8jq8gbbOqZUUZyV_WqidaOxEuYf7FOj0yX4NIIiKHxMNh8U9doMBBU0d2e&_nc_sid=5e9851&_nc_ht=instagram.fala3-2.fna.fbcdn.net&_nc_ohc=GESxI8mNi5gQ7kNvwGwyyV1&efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5JTlNUQUdSQU0uQ0xJUFMuQzMuNzIwLmRhc2hfYmFzZWxpbmVfMV92MSIsInhwdl9hc3NldF9pZCI6ODU1NjQxNzEwMDg2MTQyLCJ2aV91c2VjYXNlX2lkIjoxMDA5OSwiZHVyYXRpb25fcyI6NDQsInVybGdlbl9zb3VyY2UiOiJ3d3cifQ%3D%3D&ccb=17-1&vs=e0b92ecbf0812990&_nc_vs=HBksFQIYUmlnX3hwdl9yZWVsc19wZXJtYW5lbnRfc3JfcHJvZC8xMDRCRTUzN0YwODU4NTA2OTJFMTBGM0E3MzY5MzQ4MV92aWRlb19kYXNoaW5pdC5tcDQVAALIARIAFQIYOnBhc3N0aHJvdWdoX2V2ZXJzdG9yZS9HSlJnUUIybDgyZnQ2N01JQUF0eHh3S3ExZWgxYnFfRUFBQUYVAgLIARIAKAAYABsCiAd1c2Vfb2lsATEScHJvZ3Jlc3NpdmVfcmVjaXBlATEVAAAm_J_6wvOMhQMVAigCQzMsF0BGSHKwIMScGBJkYXNoX2Jhc2VsaW5lXzFfdjERAHX-B2XmnQEA&_nc_zt=28&oh=00_AfK1YAURnh7UJhzNrPTCKfnH1iWoQQW8KuexfwjyGFifrQ&oe=6834EF2D"
+                        type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+
+        </div>
+    </div>
+    <div id="modal4" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('modal4')">&times;</span>
+            <div class="video-container">
+                <video controls autoplay muted>
+                    <source
+                        src="https://instagram.fala3-2.fna.fbcdn.net/o1/v/t2/f2/m86/AQMBRDBZ5w1mr7lGGozFMhb7fzEDibwVEWS5PXtCa7j6exjVjRACsIFx8u8dCSYkWxSiRJzSLXL00aGz0JSOJrhKzl8BRHKSKpSc5LQ.mp4?_nc_cat=107&_nc_oc=AdmBeMM4ui4PjH1oWhHNjmmoHVtJ84fT02ouuB_9_MWnCTTtHyd2QopX_xksNEpd4SloJV0Wp9q1_8UUQ_6Qtuwy&_nc_sid=5e9851&_nc_ht=instagram.fala3-2.fna.fbcdn.net&_nc_ohc=3ohJIDXZbYUQ7kNvwF1W2ll&efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5JTlNUQUdSQU0uQ0xJUFMuQzMuNzIwLmRhc2hfYmFzZWxpbmVfMV92MSIsInhwdl9hc3NldF9pZCI6MTQ2NjA4ODI3ODEwNzIzNywidmlfdXNlY2FzZV9pZCI6MTAwOTksImR1cmF0aW9uX3MiOjQzLCJ1cmxnZW5fc291cmNlIjoid3d3In0%3D&ccb=17-1&vs=6b6c8698ce808167&_nc_vs=HBksFQIYUmlnX3hwdl9yZWVsc19wZXJtYW5lbnRfc3JfcHJvZC8xOTRFRUFEQzc4RTdEMDYwNjk2RUNDNDZFRTQzN0FBRl92aWRlb19kYXNoaW5pdC5tcDQVAALIARIAFQIYOnBhc3N0aHJvdWdoX2V2ZXJzdG9yZS9HS3hQSlIzc0pIZTZXV3dJQUJwU1ZyWmVCZXRnYnFfRUFBQUYVAgLIARIAKAAYABsCiAd1c2Vfb2lsATEScHJvZ3Jlc3NpdmVfcmVjaXBlATEVAAAmypG18MjZmgUVAigCQzMsF0BF0QYk3S8bGBJkYXNoX2Jhc2VsaW5lXzFfdjERAHX-B2XmnQEA&_nc_zt=28&oh=00_AfK2YXnxksXFq7elQCaRTYdchKUwL_oK_wFQOAek3DLOWQ&oe=6834E410"
+                        type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="modal5" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('modal5')">&times;</span>
+            <div class="video-container">
+                <video controls autoplay muted>
+                    <source
+                        src="https://instagram.fala3-2.fna.fbcdn.net/o1/v/t2/f2/m86/AQPn8NQBXzZ5LI8cPdHgRzMEbjdEMbMyRHAQAEy9anvcx0F1OXFs9tL8a2Y8_CGGgjAnzwAoNcMclk0WtDAAV4iyatKq_8A6FmEBQQI.mp4?_nc_cat=101&_nc_oc=AdlE5wdPKDJKlfXv9FRY49sdoPPzEb6BXhRsR2Eieuso-_D1g6zrgM0SkpGCMvk6C5kEBE40c-HxNAEX9k76CTax&_nc_sid=5e9851&_nc_ht=instagram.fala3-2.fna.fbcdn.net&_nc_ohc=5pHFXW6ONLMQ7kNvwF4uPej&efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5JTlNUQUdSQU0uQ0xJUFMuQzMuNzIwLmRhc2hfYmFzZWxpbmVfMV92MSIsInhwdl9hc3NldF9pZCI6OTk2NjY4NDM5MDgzODI0LCJ2aV91c2VjYXNlX2lkIjoxMDA5OSwiZHVyYXRpb25fcyI6MzQsInVybGdlbl9zb3VyY2UiOiJ3d3cifQ%3D%3D&ccb=17-1&vs=156bf97fa61e9949&_nc_vs=HBksFQIYUmlnX3hwdl9yZWVsc19wZXJtYW5lbnRfc3JfcHJvZC85QjQ0MjJCRTI2QzZCRUIxRjM4MUJGREQzOTZCQ0ZBQl92aWRlb19kYXNoaW5pdC5tcDQVAALIARIAFQIYOnBhc3N0aHJvdWdoX2V2ZXJzdG9yZS9HQzQzX0J3RDJXVTZmeThFQUlnUWlONzAzdk51YnFfRUFBQUYVAgLIARIAKAAYABsCiAd1c2Vfb2lsATEScHJvZ3Jlc3NpdmVfcmVjaXBlATEVAAAm4OypxN6dxQMVAigCQzMsF0BBVT987ZFoGBJkYXNoX2Jhc2VsaW5lXzFfdjERAHX-B2XmnQEA&_nc_zt=28&oh=00_AfKlE4z8W05_HeazM_KtKy1CyANnKZsPsvdqL6Ld3Jk7ew&oe=68350016"
+                        type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+
+        </div>
+    </div>
+    <div id="modal6" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('modal6')">&times;</span>
+            <div class="video-container">
+                <video controls autoplay muted>
+                    <source
+                        src="https://instagram.fala3-2.fna.fbcdn.net/o1/v/t2/f2/m367/AQOJNkfKHgzJ8YpqcQ7Ub8_edLl8JYG--8rfhPkR6DPIY91ec1eSu3ZE1oJNp0Ne1nB7pgprrwEwDQCogNgp8UmJ5_92IPt6LBTubLQ.mp4?_nc_cat=111&_nc_oc=Adm7r4kQFsUS_RRXzwMphK3qK5YjhPHTnQfKM1JLRDnse3UrA9S6D9tz3-XFG4R59gENMkt3367eBsLI7XgLJhYU&_nc_sid=5e9851&_nc_ht=instagram.fala3-2.fna.fbcdn.net&_nc_ohc=zOrKcC7nEg8Q7kNvwHGFQd4&efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5JTlNUQUdSQU0uQ0xJUFMuQzMuNzIwLmRhc2hfYmFzZWxpbmVfMV92MSIsInhwdl9hc3NldF9pZCI6NTkyNzM3MDY2NDk4OTU5LCJ2aV91c2VjYXNlX2lkIjoxMDA5OSwiZHVyYXRpb25fcyI6MjYsInVybGdlbl9zb3VyY2UiOiJ3d3cifQ%3D%3D&ccb=17-1&vs=23c81b4b2e4ba043&_nc_vs=HBksFQIYQGlnX2VwaGVtZXJhbC9EODQ5MEU4RkFGRDVBODk2MkM4NDZFMDFDMzE3NjRCRl92aWRlb19kYXNoaW5pdC5tcDQVAALIARIAFQIYOnBhc3N0aHJvdWdoX2V2ZXJzdG9yZS9HTThmOWhzeVgzVkZTU3dEQU5YOEdMYktBcXdyYnFfRUFBQUYVAgLIARIAKAAYABsCiAd1c2Vfb2lsATEScHJvZ3Jlc3NpdmVfcmVjaXBlATEVAAAmnu7ZpOvFjQIVAigCQzMsF0A7AAAAAAAAGBJkYXNoX2Jhc2VsaW5lXzFfdjERAHX-B2XmnQEA&_nc_zt=28&oh=00_AfLQEKhFR7nQPEjd8DrXkfDT3iavX5a4eBsdowuPvxT8wQ&oe=6838CE10"
+                        type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+
+        </div>
+    </div>
+    <div class="projects-section">
+        <h1>Наши проекты</h1>
+        <div class="container">
+            <img src="images/1grid.jpg" alt="">
+            <img src="images/2grid.jpg" alt="">
+            <img src="images/3grid.jpg" alt="">
+            <img src="images/4grid.jpg" alt="">
+            <img src="images/5grid.jpg" alt="">
+            <img src="images/6grid.jpg" alt="">
+            <img src="images/7grid.jpg" alt="">
+            <img src="images/8grid.jpg" alt="">
+            <img src="images/9grid.jpg" alt="">
+            <img src="images/10grid.jpg" alt="">
+            <img src="images/11hrod.jpg" alt="">
+            <img src="images/12grid.jpg" alt="">
+
+        </div>
+    </div>
+
+    <script>
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            const video = modal.querySelector('video');
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+
+            // Play video when modal opens
+            if (video) {
+                video.currentTime = 0;
+                video.play();
+            }
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            const video = modal.querySelector('video');
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+
+            // Pause video when modal closes
+            if (video) {
+                video.pause();
+            }
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function (event) {
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                if (event.target === modal) {
+                    const modalId = modal.id;
+                    closeModal(modalId);
+                }
+            });
+        }
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape') {
+                const openModal = document.querySelector('.modal[style*="block"]');
+                if (openModal) {
+                    closeModal(openModal.id);
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>
